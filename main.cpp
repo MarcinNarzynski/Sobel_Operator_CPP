@@ -20,15 +20,15 @@ void read_headers(const string &file_name, BMPFileHeader &file_header, BMPInfoHe
 
 void print_header_data(BMPFileHeader &file_header, BMPInfoHeader &info_header)
 {
-    cout << "\nFile type: " << file_header.file_type << endl;
-    cout << "File size: " << file_header.file_size << endl;
-    cout << "Data offset: " << file_header.offset_data << endl;
+    cout << "\nFile type: " << file_header.bfType << endl;
+    cout << "File size [B]: " << file_header.bfSize << endl;
+    cout << "Data offset: " << file_header.bfOffBits << endl;
 
-    cout << "\nPicture width: " << info_header.width << endl;
-    cout << "Picture height: " << info_header.height << endl;
-    cout << "Color depth: " << info_header.bit_count << endl;
-    cout << "Compression: " << info_header.compression << endl;
-    cout << "Size image: " << info_header.size_image << endl;
+    cout << "\nPicture width: " << info_header.biWidth << endl;
+    cout << "Picture height: " << info_header.biHeight << endl;
+    cout << "Color depth [bit]: " << info_header.biBitCount << endl;
+    cout << "Compression: " << info_header.biCompression << endl;
+    cout << "Image size [B]: " << info_header.biSizeImage << endl;
 }
 
 int main() {
