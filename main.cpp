@@ -5,11 +5,9 @@
 using namespace std;
 const string file_name = "oko_15x15.bmp";
 
-void read_headers(const string &file_name, BMPFileHeader &file_header, BMPInfoHeader &info_header)
-{
-    ifstream ifs {file_name, ios_base::binary};
-    if (ifs.fail())
-    {
+void read_headers(const string &file_name, BMPFileHeader &file_header, BMPInfoHeader &info_header) {
+    ifstream ifs {file_name, ios_base::binary };
+    if (ifs.fail()) {
         cout << "Error! File doesn't exist: " << file_name << endl;
         exit(1);
     }
@@ -18,8 +16,7 @@ void read_headers(const string &file_name, BMPFileHeader &file_header, BMPInfoHe
 
 }
 
-void print_header_data(BMPFileHeader &file_header, BMPInfoHeader &info_header)
-{
+void print_header_data(BMPFileHeader &file_header, BMPInfoHeader &info_header) {
     cout << "\nFile type: " << file_header.bfType << endl;
     cout << "File size [B]: " << file_header.bfSize << endl;
     cout << "Data offset: " << file_header.bfOffBits << endl;
