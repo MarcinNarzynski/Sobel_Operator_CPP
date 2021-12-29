@@ -37,6 +37,10 @@ int main() {
     cout << "info header size: " << sizeof(info_header) << endl;
 
     read_headers(file_name, file_header, info_header);
+    if (file_header.bfType != 0x4d42) {
+        cout << "Invalid BMP file.";
+        return 1;
+    }
     print_header_data(file_header, info_header);
 
     return 0;

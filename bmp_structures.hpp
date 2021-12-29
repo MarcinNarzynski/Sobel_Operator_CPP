@@ -15,8 +15,8 @@ struct BMPInfoHeader {
     uint32_t biSize{0};                 // Size of this header (in bytes)
     int32_t biWidth{0};                 // width of bitmap in pixels
     int32_t biHeight{0};                // width of bitmap in pixels
-    //       (if positive, bottom-up, with origin in lower left corner)
-    //       (if negative, top-down, with origin in upper left corner)
+                                        // (if positive, bottom-up, with origin in lower left corner)
+                                        // (if negative, top-down, with origin in upper left corner)
     uint16_t biPlanes{1};               // No. of planes for the target device, this is always 1
     uint16_t biBitCount{0};             // No. of bits per pixel
     uint32_t biCompression{0};          // 0 or 3 - uncompressed. THIS PROGRAM CONSIDERS ONLY UNCOMPRESSED BMP images
