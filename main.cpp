@@ -22,7 +22,12 @@ int main() {
     read_headers(file_name, file_header, info_header);
     print_header_data(file_header, info_header);
 
-    unsigned char my_table[info_header.width][info_header.height][3];
+    if (file_header.bfType != 0x4d42) {
+        cout << "Invalid BMP file.";
+        return 1;
+    }
+
+    unsigned char my_table[info_header.biWidth][info_header.biHeight][3];
     cout << "My Table size: " << sizeof(my_table) << endl;
 
     unsigned char *p_my_table = NULL;
@@ -32,8 +37,8 @@ int main() {
 
     unsigned char value = 0;
 
-    for (int hei=0; hei < info_header.height; hei++) {
-        for (int wid=0; wid < info_header.height; wid++) {
+    for (int hei=0; hei < info_header.biHeight; hei++) {
+        for (int wid=0; wid < info_header.biWidth; wid++) {
             for (int color = 0; color < 3; color++) {
                 my_table[hei][wid][color] = value;
                 value++;
@@ -66,21 +71,21 @@ void read_headers(const string &file_name, BMPFileHeader &file_header, BMPInfoHe
 }
 
 void print_header_data(BMPFileHeader &file_header, BMPInfoHeader &info_header) {
-    cout << "\nFile type: " << file_header.file_type << endl;
-    cout << "File size: " << file_header.file_size << endl;
-    cout << "Data offset: " << file_header.offset_data << endl;
+    cout << "\nFile type: " << file_header.bfType << endl;
+    cout << "File size [B]: " << file_header.bfSize << endl;
+    cout << "Data offset: " << file_header.bfOffBits << endl;
 
-    cout << "\nPicture width: " << info_header.width << endl;
-    cout << "Picture height: " << info_header.height << endl;
-    cout << "Color depth: " << info_header.bit_count << endl;
-    cout << "Compression: " << info_header.compression << endl;
-    cout << "Size image: " << info_header.size_image << endl;
+    cout << "\nPicture width: " << info_header.biWidth << endl;
+    cout << "Picture height: " << info_header.biHeight << endl;
+    cout << "Color depth [bit]: " << info_header.biBitCount << endl;
+    cout << "Compression: " << info_header.biCompression << endl;
+    cout << "Image size [B]: " << info_header.biSizeImage << endl;
 }
 
 void read_pixels_data(const string &file_name,
                       BMPFileHeader &file_header,
                       BMPInfoHeader &info_header,
                       vector<uint8_t> &pixels) {
-    int first_pixel_position = file_header.offset_data;
+    int first_pixel_position = file_header.bfOffBits;
     int dummy_data_size = 0;
 }
