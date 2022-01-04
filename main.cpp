@@ -11,11 +11,11 @@ typedef vector<uint8_t> vector1d;
 
 const string file_name = "oko_20x14.bmp";
 
-void read_headers(const string &file_name, BMPFileHeader &file_header, BMPInfoHeader &info_header);
+void read_headers(const string &input_file, BMPFileHeader &file_header, BMPInfoHeader &info_header);
 
 void print_header_data(BMPFileHeader &file_header, BMPInfoHeader &info_header);
 
-void read_pixels_data(const string &file_name, BMPFileHeader &file_header, BMPInfoHeader &info_header, vector3d &result);
+void read_pixels_data(const string &input_file, BMPFileHeader &file_header, BMPInfoHeader &info_header, vector3d &result);
 
 int main() {
 
@@ -42,10 +42,10 @@ int main() {
     return 0;
 }
 
-void read_headers(const string &file_name,
+void read_headers(const string &input_file,
                   BMPFileHeader &file_header,
                   BMPInfoHeader &info_header) {
-    ifstream ifs{file_name, ios_base::binary};
+    ifstream ifs{input_file, ios_base::binary};
     if (ifs.good()) {
         ifs.read((char *) &file_header, sizeof(file_header));
         ifs.read((char *) &info_header, sizeof(info_header));
@@ -53,7 +53,7 @@ void read_headers(const string &file_name,
         ifs.close();
         return;
     }
-    cout << "Error in file: " << file_name << endl;
+    cout << "Error in file: " << input_file << endl;
     exit(1);
 
 }
@@ -71,7 +71,7 @@ void print_header_data(BMPFileHeader &file_header,
     cout << "Image size [B]: " << info_header.biSizeImage << endl;
 }
 
-void read_pixels_data(const string &file_name,
+void read_pixels_data(const string &input_file,
                       BMPFileHeader &file_header,
                       BMPInfoHeader &info_header,
                       vector3d &result) {
@@ -82,31 +82,29 @@ void read_pixels_data(const string &file_name,
 
     unsigned int dummy_data_size = (info_header.biSizeImage - pict_width * pict_height * bytes_per_color) / pict_height;
 
-    ifstream ifs{file_name, ios_base::binary};
+    ifstream ifs{input_file, ios_base::binary};
     if (ifs.good()) {
-
+        cout << "Reading picture data from file..." << endl;
         // Jump to the pixel data location
-        ifs.seekg(first_pixel_position, ifs.beg);
+        ifs.seekg(first_pixel_position, ifstream::beg);
 
-        uint8_t value;
         uint8_t dummy[dummy_data_size];
+
         for (int hei = 0; hei < pict_height; hei++) {
             for (int wid = 0; wid < pict_width; wid++) {
                 for (int color = 0; color < bytes_per_color; color++) {
-                    ifs.read((char *) &value, 1);
-                    result[hei][wid][color] = value;
-                    cout << "Value in result: " << +result[hei][wid][color] << endl;
-
+                    ifs.read((char *) &result[hei][wid][color], 1);
                 }
             }
             // reading dummy bytes after end of each line, dummy_data_size can be zero
             ifs.read((char *) &dummy, dummy_data_size);
         }
 
-
         ifs.close();
+        cout << "...finished reading with success." << endl;
+
         return;
     }
-    cout << "Error in file during copying picture data: " << file_name << endl;
+    cout << "Error in file during copying picture data: " << input_file << endl;
     exit(1);
 }
