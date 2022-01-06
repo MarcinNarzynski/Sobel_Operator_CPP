@@ -6,13 +6,13 @@
 
 using namespace std;
 
-typedef vector<vector<vector<uint8_t>>> vector3d_u8;
-typedef vector<vector<uint8_t>> vector2d_u8;
 typedef vector<uint8_t> vector1d_u8;
+typedef vector<vector1d_u8> vector2d_u8;
+typedef vector<vector2d_u8> vector3d_u8;
 
-typedef vector<vector<vector<int8_t>>> vector3d_8;
-typedef vector<vector<int8_t>> vector2d_8;
 typedef vector<int8_t> vector1d_8;
+typedef vector<vector1d_8> vector2d_8;
+typedef vector<vector2d_8> vector3d_8;
 
 #pragma pack(push, 1)
 

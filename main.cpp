@@ -1,12 +1,13 @@
 #include <iostream>
-#include <fstream>
 #include <vector>
+#include <algorithm>
 #include "bmp_structures.hpp"
 #include "file_processor.hpp"
 
 using namespace std;
 
-const string picture_file_name = "oko_20x14.bmp";
+const string picture_file_name = "oko_17x12.bmp";
+const string processed_picture_file_name = "processed_by_sobel.bmp";
 const string sobel_file_name = "sobel_tables.conf";
 
 void print_header_data(BMPFileHeader &file_header, BMPInfoHeader &info_header);
@@ -32,8 +33,13 @@ int main() {
     vector3d_u8 picture_data(info_header.biHeight, vector2d_u8(info_header.biWidth, vector1d_u8(info_header.biBitCount / 8)));
     read_pixels_data(picture_file_name, file_header, info_header, picture_data);
 
+    // Bmp file holds lower line as first so lines should be reversed before processing
+    reverse(picture_data.begin(), picture_data.end());
+
     vector3d_8 sobel_tables;
     read_sobel_tables_from_file(sobel_file_name, sobel_tables);
+
+    save_as_bmp_file(processed_picture_file_name, file_header, info_header, picture_data);
 
     return 0;
 }
