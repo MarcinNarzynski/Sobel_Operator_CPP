@@ -1,5 +1,18 @@
 
+#ifndef PROJ_2_BMP_STRUCTURES_HPP
+#define PROJ_2_BMP_STRUCTURES_HPP
+
 #include <cstdint>
+
+using namespace std;
+
+typedef vector<vector<vector<uint8_t>>> vector3d_u8;
+typedef vector<vector<uint8_t>> vector2d_u8;
+typedef vector<uint8_t> vector1d_u8;
+
+typedef vector<vector<vector<int8_t>>> vector3d_8;
+typedef vector<vector<int8_t>> vector2d_8;
+typedef vector<int8_t> vector1d_8;
 
 #pragma pack(push, 1)
 
@@ -28,3 +41,5 @@ struct BMPInfoHeader {
 };
 
 #pragma pack(pop)
+
+#endif //PROJ_2_BMP_STRUCTURES_HPP
