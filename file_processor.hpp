@@ -3,6 +3,7 @@
 #define PROJ_2_FILE_PROCESSOR_HPP
 
 #include <string>
+
 #include "bmp_structures.hpp"
 
 void read_headers(const string &input_file, BMPFileHeader &file_header, BMPInfoHeader &info_header);

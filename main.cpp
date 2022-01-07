@@ -1,12 +1,17 @@
 #include <iostream>
-#include <vector>
 #include <algorithm>
+#include <chrono>
+
 #include "bmp_structures.hpp"
 #include "file_processor.hpp"
+#include "sobel_processor.hpp"
 
 using namespace std;
 
 const string picture_file_name = "oko_17x12.bmp";
+//const string picture_file_name = "morze_2000.bmp";
+//const string picture_file_name = "morze_500.bmp";
+//const string picture_file_name = "morze_7952x5304.bmp";
 const string processed_picture_file_name = "processed_by_sobel.bmp";
 const string sobel_file_name = "sobel_tables.conf";
 
@@ -30,7 +35,15 @@ int main() {
 
     cout << endl;
 
+    auto start = chrono::high_resolution_clock::now();
+
     vector3d_u8 picture_data(info_header.biHeight, vector2d_u8(info_header.biWidth, vector1d_u8(info_header.biBitCount / 8)));
+    vector3d_u8 processed_picture_data(picture_data);  // deep copy of picture_data = vector of the same size
+
+    auto stop = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::milliseconds  >(stop - start);
+    cout << "Creating vectors time [ms]: " << duration.count() << endl;
+
     read_pixels_data(picture_file_name, file_header, info_header, picture_data);
 
     // Bmp file holds lower line as first so lines should be reversed before processing
@@ -39,7 +52,11 @@ int main() {
     vector3d_8 sobel_tables;
     read_sobel_tables_from_file(sobel_file_name, sobel_tables);
 
-    save_as_bmp_file(processed_picture_file_name, file_header, info_header, picture_data);
+    process_picture(sobel_tables, picture_data, processed_picture_data);
+
+    reverse(processed_picture_data.begin(), processed_picture_data.end());
+
+    save_as_bmp_file(processed_picture_file_name, file_header, info_header, processed_picture_data);
 
     return 0;
 }

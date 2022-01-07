@@ -3,6 +3,7 @@
 #define PROJ_2_BMP_STRUCTURES_HPP
 
 #include <cstdint>
+#include <vector>
 
 using namespace std;
 

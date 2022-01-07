@@ -1,12 +1,11 @@
 
 #include <string>
 #include <fstream>
+#include <chrono>
 #include <iostream>
-#include <vector>
 #include <sstream>
-#include "bmp_structures.hpp"
-#include "file_processor.hpp"
 
+#include "bmp_structures.hpp"
 
 using namespace std;
 
@@ -16,6 +15,7 @@ const char data_separator = ',';
 void read_headers(const string &input_file,
                   BMPFileHeader &file_header,
                   BMPInfoHeader &info_header) {
+    auto start = chrono::high_resolution_clock::now();
     ifstream ifs{input_file, ios_base::binary};
 
     if (ifs.good()) {
@@ -23,6 +23,11 @@ void read_headers(const string &input_file,
         ifs.read((char *) &info_header, sizeof(info_header));
 
         ifs.close();
+
+        auto stop = chrono::high_resolution_clock::now();
+        auto duration = chrono::duration_cast<chrono::milliseconds  >(stop - start);
+        cout << "Reading headers time [ms]: " << duration.count() << endl;
+
         return;
     }
 
@@ -35,6 +40,9 @@ void read_pixels_data(const string &input_file,
                       BMPFileHeader &file_header,
                       BMPInfoHeader &info_header,
                       vector3d_u8 &result) {
+
+    auto start = chrono::high_resolution_clock::now();
+
     int first_pixel_position = int(file_header.bfOffBits);
     int pict_width = info_header.biWidth;
     int pict_height = info_header.biHeight;
@@ -42,10 +50,10 @@ void read_pixels_data(const string &input_file,
 
     unsigned int dummy_data_size = (info_header.biSizeImage - pict_width * pict_height * bytes_per_color) / pict_height;
 
+    cout << "Reading picture data from file..." << endl;
     ifstream ifs{input_file, ios_base::binary};
 
     if (ifs.good()) {
-        cout << "Reading picture data from file..." << endl;
         // Jump to the pixel data location
         ifs.seekg(first_pixel_position, ifstream::beg);
 
@@ -63,6 +71,10 @@ void read_pixels_data(const string &input_file,
 
         ifs.close();
         cout << "...finished reading with success.\n" << endl;
+
+        auto stop = chrono::high_resolution_clock::now();
+        auto duration = chrono::duration_cast<chrono::milliseconds  >(stop - start);
+        cout << "Opening file time [ms]: " << duration.count() << endl;
 
         return;
     }
@@ -144,17 +156,20 @@ void read_sobel_tables_from_file(const string &input_file,
 void save_as_bmp_file(const string &output_file, BMPFileHeader &file_header, BMPInfoHeader &info_header,
                       vector3d_u8 &picture_data) {
 
+    auto start = chrono::high_resolution_clock::now();
+
+    cout << "Saving processed picture data to file " << output_file << "..." << endl;
     ofstream ofs{output_file, ios_base::binary};
 
     if (ofs.good()) {
-        cout << "Saving processed picture data to file " << output_file << "..." << endl;
 
         int pict_width = info_header.biWidth;
         int pict_height = info_header.biHeight;
         int bytes_per_color = info_header.biBitCount / 8;
 
-        unsigned int dummy_data_size = (info_header.biSizeImage - pict_width * pict_height * bytes_per_color) / pict_height;
-        uint8_t dummy[3] {0};  // optional additional bytes according to bmp standard, max 3 bytes in length
+        unsigned int dummy_data_size =
+                (info_header.biSizeImage - pict_width * pict_height * bytes_per_color) / pict_height;
+        uint8_t dummy[3]{0};  // optional additional bytes according to bmp standard, max 3 bytes in length
 
         // write headers
         ofs.write((char *) &file_header, sizeof(file_header));
@@ -173,6 +188,10 @@ void save_as_bmp_file(const string &output_file, BMPFileHeader &file_header, BMP
 
         ofs.close();
         cout << "...saving file finished with success.\n" << endl;
+
+        auto stop = chrono::high_resolution_clock::now();
+        auto duration = chrono::duration_cast<chrono::milliseconds  >(stop - start);
+        cout << "Saving file time [ms]: " << duration.count() << endl;
 
         return;
     }
