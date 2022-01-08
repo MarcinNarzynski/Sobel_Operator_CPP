@@ -8,10 +8,12 @@
 
 using namespace std;
 
-const string picture_file_name = "oko_17x12.bmp";
+//const string picture_file_name = "oko_17x12.bmp";
+const string picture_file_name = "owad_800.bmp";
 //const string picture_file_name = "morze_2000.bmp";
-//const string picture_file_name = "morze_500.bmp";
+//const string picture_file_name = "internet_950.bmp";
 //const string picture_file_name = "morze_7952x5304.bmp";
+
 const string processed_picture_file_name = "processed_by_sobel.bmp";
 const string sobel_file_name = "sobel_tables.conf";
 

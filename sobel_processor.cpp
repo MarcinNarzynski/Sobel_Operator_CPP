@@ -8,7 +8,7 @@ using namespace std;
 
 const uint8_t background_color = 222;
 
-uint8_t average(vector1d_u8 &numbers) {
+uint8_t average(vector<int> &numbers) {
     float sum = 0;
     for (auto it: numbers) {
         sum += float(it);
@@ -18,7 +18,7 @@ uint8_t average(vector1d_u8 &numbers) {
 
 uint8_t process_pixel(int px, int py, int color, vector3d_8 &sobel_tables, vector3d_u8 &picture_data) {
 
-    vector1d_u8 pixel_processed_by_all_tables;
+    vector<int> pixel_processed_by_all_tables;  // this values may be bigger than 255 and lower then 0
 
     for (const vector2d_8 &s_tab: sobel_tables ) {  // iterate through Sobel tables
         int s_tab_size = int(s_tab.size());
@@ -47,7 +47,7 @@ uint8_t process_pixel(int px, int py, int color, vector3d_8 &sobel_tables, vecto
                 pixel_value_sum += pixel_value * s_value;
             }
         }
-        pixel_processed_by_all_tables.push_back(pixel_value_sum);
+        pixel_processed_by_all_tables.push_back(abs(pixel_value_sum));  // manual says no word about module here!
     }
     return average(pixel_processed_by_all_tables);
 }
