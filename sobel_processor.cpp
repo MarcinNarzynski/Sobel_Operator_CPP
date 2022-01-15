@@ -1,4 +1,3 @@
-
 #include <cmath>
 #include <iostream>
 
@@ -6,7 +5,7 @@
 
 using namespace std;
 
-const uint8_t background_color = 222;
+const uint8_t background_color = 0;
 
 uint8_t average(vector<int> &numbers) {
     float sum = 0;
@@ -62,8 +61,8 @@ void process_picture(vector3d_8 &sobel_tables, vector3d_u8 &picture_data, vector
     for (int color = 0; color < color_chan; color++) {
         for (int row = 0; row < pict_hei; row++) {
             if ((pict_hei - row) % 100 == 0) {
-                cout << "  Color left: " << color_chan - color
-                     << "   picture lines left: " << pict_hei - row << "  \r" << flush;
+                cout << "  Color, picture lines left: " << color_chan - color
+                     << ", " << pict_hei - row << "  \r" << flush;
             }
             for (int col = 0; col < pict_wid; col++) {
                 uint8_t pixel_value = process_pixel(col, row, color, sobel_tables, picture_data);
@@ -73,4 +72,3 @@ void process_picture(vector3d_8 &sobel_tables, vector3d_u8 &picture_data, vector
     }
     cout << "...Sobel processing finished with success.                   \n" << endl;
 }
-

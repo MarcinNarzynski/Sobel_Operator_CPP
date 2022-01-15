@@ -1,4 +1,3 @@
-
 #include <string>
 #include <fstream>
 #include <chrono>
@@ -6,6 +5,7 @@
 #include <sstream>
 
 #include "bmp_structures.hpp"
+#include "bmp_calculations.hpp"
 
 using namespace std;
 
@@ -39,16 +39,15 @@ void read_headers(const string &input_file,
 void read_pixels_data(const string &input_file,
                       BMPFileHeader &file_header,
                       BMPInfoHeader &info_header,
-                      vector3d_u8 &result) {
+                      vector3d_u8 &result,
+                      int first_pixel_position,
+                      int pict_height) {
 
     auto start = chrono::high_resolution_clock::now();
 
-    int first_pixel_position = int(file_header.bfOffBits);
     int pict_width = info_header.biWidth;
-    int pict_height = info_header.biHeight;
     int bytes_per_color = info_header.biBitCount / 8;
-
-    unsigned int dummy_data_size = (info_header.biSizeImage - pict_width * pict_height * bytes_per_color) / pict_height;
+    unsigned int dummy_data_size = calc_dummy_data_size(file_header, info_header);
 
     cout << "Reading picture data from file..." << endl;
     ifstream ifs{input_file, ios_base::binary};
@@ -158,22 +157,32 @@ void save_as_bmp_file(const string &output_file, BMPFileHeader &file_header, BMP
 
     auto start = chrono::high_resolution_clock::now();
 
+    BMPFileHeader file_header_for_save = file_header;
+    BMPInfoHeader info_header_for_save = info_header;
+
     cout << "Saving processed picture data to file " << output_file << "..." << endl;
     ofstream ofs{output_file, ios_base::binary};
 
     if (ofs.good()) {
 
-        int pict_width = info_header.biWidth;
-        int pict_height = info_header.biHeight;
-        int bytes_per_color = info_header.biBitCount / 8;
+        int pict_height = int(picture_data.size());
+        int pict_width = int(picture_data[0].size());
+        int bytes_per_color = int(picture_data[0][0].size());
+        unsigned int dummy_data_size = calc_dummy_data_size(file_header, info_header);
 
-        unsigned int dummy_data_size =
-                (info_header.biSizeImage - pict_width * pict_height * bytes_per_color) / pict_height;
+        int raw_picture_data_size = pict_height * pict_width * bytes_per_color;
+        int total_picture_data_size = raw_picture_data_size + int(dummy_data_size) * pict_height;
+        int total_file_size = total_picture_data_size + int(sizeof(file_header)) + int(sizeof(info_header));
         uint8_t dummy[3]{0};  // optional additional bytes according to bmp standard, max 3 bytes in length
 
+        file_header_for_save.bfSize = total_file_size;
+        info_header_for_save.biHeight = pict_height;
+        info_header_for_save.biSizeImage = total_picture_data_size;
+
+
         // write headers
-        ofs.write((char *) &file_header, sizeof(file_header));
-        ofs.write((char *) &info_header, sizeof(info_header));
+        ofs.write((char *) &file_header_for_save, sizeof(file_header_for_save));
+        ofs.write((char *) &info_header_for_save, sizeof(info_header_for_save));
 
         // write pixels
         for (int hei = 0; hei < pict_height; hei++) {
